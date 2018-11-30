@@ -1,0 +1,43 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.mihir.redditcoroutine.ui.view.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Sort"
+        app:showAsAction="always">
+        <menu>
+
+            <item android:title="Hot" />
+            <item android:title="New" />
+            <item android:title="Rising" />
+            <item android:title="Top">
+                <menu>
+                    <item android:title="Hour" />
+                    <item android:title="Day" />
+                    <item android:title="Week" />
+                    <item android:title="Month" />
+                    <item android:title="Year" />
+                    <item android:title="All" />
+
+                </menu>
+            </item>
+            <item android:title="Controversial">
+                <menu>
+                    <item android:title="Hour" />
+                    <item android:title="Day" />
+                    <item android:title="Week" />
+                    <item android:title="Month" />
+                    <item android:title="Year" />
+                    <item android:title="All" />
+                </menu>
+            </item>
+        </menu>
+    </item>
+</menu>
