@@ -53,6 +53,13 @@ class PostRepository(val database: AppDatabase) {
 
     fun mapToEntity(children: List<SubredditResponse.Data.Children>, subredditName: String): List<PostEntity> {
         return children.map { children ->
+
+            val previewUrl = if (children.data.preview != null) {
+                if (children.data.preview.images.get(0).resolutions.isNotEmpty())
+                    children.data.preview.images.get(0).resolutions.last().url
+                else ""
+            } else
+                null
             PostEntity(children.data.name,
                     children.data.title,
                     children.data.author,
@@ -64,7 +71,7 @@ class PostRepository(val database: AppDatabase) {
                     children.data.linkFlairText,
                     children.data.gilded,
                     subredditName,
-                    children.data.preview?.images?.get(0)?.resolutions?.last()?.url,
+                    previewUrl,
                     children.data.url,
                     children.data.selftext,
                     children.data.isSelf)

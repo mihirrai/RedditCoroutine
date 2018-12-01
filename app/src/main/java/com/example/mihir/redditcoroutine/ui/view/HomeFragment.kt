@@ -46,7 +46,7 @@ class HomeFragment : BaseFragment() {
         }
 
         adapter.onMediaClick = {
-            fragmentNavigation.pushFragment(MediaFragment.newInstance(it.url))
+            activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url))
         }
 
 

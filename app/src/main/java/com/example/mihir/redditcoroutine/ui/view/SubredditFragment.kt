@@ -55,7 +55,7 @@ class SubredditFragment : BaseFragment() {
             fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id))
         }
         adapter.onMediaClick = {
-            fragmentNavigation.pushFragment(MediaFragment.newInstance(it.url))
+            activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url))
         }
         swipe_refresh.setOnRefreshListener {
             viewModel.refresh(subreddit)

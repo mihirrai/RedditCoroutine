@@ -1,8 +1,10 @@
 package com.example.mihir.redditcoroutine.ui.view
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.mihir.redditcoroutine.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,7 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
         FragNavController.RootFragmentListener,
-        BaseFragment.FragmentNavigation {
+        BaseFragment.FragmentNavigation,
+        BaseFragment.ActivityNavigation {
 
     val fragNavController: FragNavController = FragNavController(supportFragmentManager, R.id.container)
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -40,6 +43,18 @@ class MainActivity : AppCompatActivity(),
 
     override fun pushFragment(fragment: Fragment) {
         fragNavController.pushFragment(fragment)
+    }
+
+    override fun pushDialogFragment(dialogFragment: DialogFragment) {
+        fragNavController.showDialogFragment(dialogFragment)
+    }
+
+    override fun pushActivty(intent: Intent) {
+        startActivity(intent)
+    }
+
+    override fun popFragment() {
+        fragNavController.popFragment()
     }
 
     override fun setToolbar(toolbar: Toolbar) {
