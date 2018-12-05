@@ -1,5 +1,6 @@
 package com.example.mihir.redditcoroutine.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -26,5 +27,5 @@ interface PostDao {
     fun deleteBySubreddit(subreddit: String)
 
     @Query("SELECT * FROM posts WHERE id = :id")
-    fun getPostById(id: String): PostEntity
+    fun getPostById(id: String): LiveData<PostEntity>
 }

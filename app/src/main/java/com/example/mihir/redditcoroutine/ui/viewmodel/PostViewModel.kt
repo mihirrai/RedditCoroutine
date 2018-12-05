@@ -2,8 +2,11 @@ package com.example.mihir.redditcoroutine.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.LivePagedListBuilder
+import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
 import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
+import com.example.mihir.redditcoroutine.data.repository.CommentBoundaryCallback
 import com.example.mihir.redditcoroutine.data.repository.PostDetailRepository
 import com.example.mihir.redditcoroutine.data.repository.TokenRepository
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +30,12 @@ class PostViewModel(private val tokenRepository: TokenRepository, private val po
 
     val localPost = MutableLiveData<PostEntity>()
 
+    fun localPost(id: String)=postDetailRepository.getLocalPost("t3_$id")
+
+    fun list(subreddit: String,postId:String)=LivePagedListBuilder<Int,CommentEntity>(postDetailRepository.getLocalComments(postId),10)
+            .setBoundaryCallback(CommentBoundaryCallback(tokenRepository,postDetailRepository,subreddit,postId, CoroutineScope(coroutineContext)))
+            .build()
+
     fun test(subreddit: String, article: String) {
         launch {
             val t = postDetailRepository.getDetails(tokenRepository.getToken().access_token, subreddit, article)
@@ -44,15 +53,9 @@ class PostViewModel(private val tokenRepository: TokenRepository, private val po
             postDetailRepository.updateLocalPosts(id,
                     res.value!![0].data.children[0].data.score,
                     res.value!![0].data.children[0].data.numComments)
-            getLocalPost(id)
         }
     }
 
-    fun getLocalPost(id: String) {
-        launch {
-            localPost.postValue(postDetailRepository.getLocalPost(id))
-        }
-    }
 
 
     fun dump(children: List<PostDetailResponse.Data.Children>) {

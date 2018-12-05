@@ -12,7 +12,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_reddit_black_24dp"/>
 
     <TextView
         android:id="@+id/name_subreddit"

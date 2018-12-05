@@ -3,47 +3,61 @@ package com.example.mihir.redditcoroutine.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mihir.redditcoroutine.R
-import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
+import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
+import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
+import com.example.mihir.redditcoroutine.ui.viewholder.CommentHeaderViewHolder
 import com.example.mihir.redditcoroutine.ui.viewholder.CommentViewHolder
 import com.example.mihir.redditcoroutine.ui.viewholder.MoreCommentViewHolder
 
-class CommentAdapter : ListAdapter<PostDetailResponse.Data.Children, RecyclerView.ViewHolder>(diffCallBack) {
+class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHolder>(diffCallBack) {
+
+    private var postEntity: PostEntity? =null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_NORMAL -> CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_comment, parent, false))
-            else -> MoreCommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_more_comment, parent, false))
+            R.layout.recycler_item_post_title -> CommentHeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_post_title, parent, false))
+            R.layout.recycler_item_comment -> CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_comment, parent, false))
+            R.layout.recycler_item_more_comment -> MoreCommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_more_comment, parent, false))
+            else -> throw IllegalArgumentException("Unknown view type $viewType")
         }
+
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder.itemViewType) {
-            TYPE_NORMAL -> (holder as CommentViewHolder).bindTo(getItem(position))
-            else -> (holder as MoreCommentViewHolder).bindTo(getItem(position))
+        when (holder) {
+            is CommentHeaderViewHolder -> holder.bindTo(postEntity)
+            is CommentViewHolder -> holder.bindTo(getItem(position))
+            is MoreCommentViewHolder -> holder.bindTo(getItem(position))
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            getItem(position).data.body != null -> TYPE_NORMAL
-            else -> TYPE_MORE
+            position == HEADER_POSITION -> R.layout.recycler_item_post_title
+            getItem(position).body != null -> R.layout.recycler_item_comment
+            else -> R.layout.recycler_item_more_comment
+        }
+    }
+
+    fun setHeaderItem(newPostEntity: PostEntity) {
+        val previousItem = this.postEntity
+        this.postEntity = newPostEntity
+        if (previousItem != newPostEntity) {
+            notifyItemChanged(HEADER_POSITION)
         }
     }
 
     companion object {
-        const val TYPE_NORMAL = 0
-        const val TYPE_MORE = 1
-        private val diffCallBack = object : DiffUtil.ItemCallback<PostDetailResponse.Data.Children>() {
-            override fun areItemsTheSame(oldItem: PostDetailResponse.Data.Children, newItem: PostDetailResponse.Data.Children): Boolean {
-                return oldItem.data.id == newItem.data.id
+        const val HEADER_POSITION = 0
+        private val diffCallBack = object : DiffUtil.ItemCallback<CommentEntity>() {
+            override fun areItemsTheSame(oldItem: CommentEntity, newItem: CommentEntity): Boolean {
+                return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: PostDetailResponse.Data.Children, newItem: PostDetailResponse.Data.Children): Boolean {
+            override fun areContentsTheSame(oldItem: CommentEntity, newItem: CommentEntity): Boolean {
                 return oldItem == newItem
             }
         }
     }
-
 }

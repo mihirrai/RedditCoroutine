@@ -17,27 +17,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <androidx.core.widget.NestedScrollView
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_comments"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <include layout="@layout/recycler_item_post_title"
-                    android:id="@+id/main_post_details"
-                    android:visibility="invisible"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview_comments"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible"
-                    tools:listitem="@layout/recycler_item_comment" />
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            android:layout_height="match_parent"
+            android:layout_below="@id/recycler_item"
+            tools:listitem="@layout/recycler_item_comment" />
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

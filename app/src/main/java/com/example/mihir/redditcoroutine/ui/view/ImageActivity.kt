@@ -14,10 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.example.mihir.redditcoroutine.R
 import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.indicator.ProgressIndicator
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.loader.glide.GlideImageLoader
-import com.github.piasy.biv.view.BigImageView
 import kotlinx.android.synthetic.main.activity_image.*
 import me.saket.flick.ContentSizeProvider
 import me.saket.flick.FlickCallbacks
@@ -124,6 +122,38 @@ class ImageActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, 0)
+    }
+
+    override fun onBackPressed() {
+        animateExit {
+            super.onBackPressed()
+        }
+    }
+
+    private fun animateExit(onEndAction: () -> Unit) {
+        val animDuration: Long = 200
+        imageviewer_image_container.animate()
+                .alpha(0f)
+                .translationY(imageviewer_image_container.height / 20F)
+                .rotation(-2F)
+                .setDuration(animDuration)
+                .setInterpolator(FastOutSlowInInterpolator())
+                .withEndAction(onEndAction)
+                .start()
+
+        ObjectAnimator.ofFloat(0F, 1F).apply {
+            duration = animDuration
+            interpolator = FastOutSlowInInterpolator()
+            addUpdateListener { animation ->
+                updateBackgroundDimmingAlpha(animation.animatedValue as Float)
+            }
+            start()
+        }
     }
 
     private fun finishInMillis(millis: Long) {

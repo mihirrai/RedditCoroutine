@@ -3,8 +3,8 @@ package com.example.mihir.redditcoroutine
 import android.content.Context
 import android.text.SpannableStringBuilder
 import android.widget.TextView
+import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
-import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
 import ru.noties.markwon.Markwon
 import ru.noties.markwon.SpannableConfiguration
 import ru.noties.markwon.renderer.SpannableRenderer
@@ -24,13 +24,13 @@ interface StringUtil {
         return detailStringBuilder
     }
 
-    fun getCommentDetails(children: PostDetailResponse.Data.Children): SpannableStringBuilder {
+    fun getCommentDetails(children: CommentEntity): SpannableStringBuilder {
 
         val detailsStringBuilder = SpannableStringBuilder()
         val separator = " \u2022 "
-        return detailsStringBuilder.append(children.data.author + separator +
-                children.data.score + separator +
-                getTimeAgo(children.data.createdUtc.toLong() * 1000))
+        return detailsStringBuilder.append(children.author + separator +
+                //children.score + separator +
+                getTimeAgo(children.createdUtc!!.toLong() * 1000))
     }
 
     fun getPostStats(postEntity: PostEntity): SpannableStringBuilder {
