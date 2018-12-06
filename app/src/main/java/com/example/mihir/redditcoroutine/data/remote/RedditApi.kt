@@ -1,6 +1,7 @@
 package com.example.mihir.redditcoroutine.data.remote
 
 import android.util.Log
+import com.example.mihir.redditcoroutine.data.remote.response.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Deferred
@@ -45,6 +46,10 @@ interface RedditAPI {
     fun getPostDetails(@HeaderMap headers: Map<String, String>,
                        @Path("subreddit") subreddit: String,
                        @Path("article") article: String): Deferred<Response<List<PostDetailResponse>>>
+
+    @GET("/api/morechildren/")
+    fun getMoreComments(@HeaderMap headers: Map<String, String>,
+                        @QueryMap options: Map<String, String>): Deferred<Response<MoreCommentResponse>>
 
     companion object {
         private const val BASE_URL = "https://www.reddit.com/"

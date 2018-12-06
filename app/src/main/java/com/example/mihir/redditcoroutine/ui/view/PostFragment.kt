@@ -54,6 +54,10 @@ class PostFragment : BaseFragment() {
         view.recyclerview_comments.layoutManager = LinearLayoutManager(activity)
         view.recyclerview_comments.addItemDecoration(DividerItemDecoration(context, 1))
 
+        adapter.onMoreItemClick={
+            viewModel.loadMoreComments(id,it)
+        }
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

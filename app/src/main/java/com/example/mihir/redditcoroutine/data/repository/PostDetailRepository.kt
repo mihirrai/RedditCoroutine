@@ -1,12 +1,13 @@
 package com.example.mihir.redditcoroutine.data.repository
 
+import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.paging.PagedList
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
-import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
+import com.example.mihir.redditcoroutine.data.remote.response.MoreCommentResponse
+import com.example.mihir.redditcoroutine.data.remote.response.PostDetailResponse
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -21,6 +22,16 @@ class PostDetailRepository(val database: AppDatabase) {
         val headers = HashMap<String, String>()
         headers["Authorization"] = "Bearer $accessToken"
         return oauth.getPostDetails(headers, subreddit, article).await()
+    }
+
+    suspend fun getMoreComments(accessToken: String, postId: String, children: String): Response<MoreCommentResponse> {
+        val headers = HashMap<String, String>()
+        headers["Authorization"] = "Bearer $accessToken"
+        val query = HashMap<String, String>()
+        query["link_id"] = "t3_$postId"
+        query["children"] = children
+        query["api_type"] = "json"
+        return oauth.getMoreComments(headers, query).await()
     }
 
     fun getLocalPost(id: String): LiveData<PostEntity> {
@@ -48,4 +59,35 @@ class PostDetailRepository(val database: AppDatabase) {
         }
     }
 
+    suspend fun insertMoreComments(things: List<MoreCommentResponse.TJson.Data.Thing>, position: Int, postId: String) {
+        return coroutineScope {
+            async(Dispatchers.IO) {
+                database.commentDao().deleteByPosition(position, postId)
+            }.await()
+            async(Dispatchers.IO) {
+                d("size",things.size.toString())
+                database.commentDao().updatePosition(position, things.size, postId)
+            }.await()
+            async(Dispatchers.IO) {
+                database.commentDao().insert(mapToEnity(things,position,postId))
+            }.await()
+        }
+    }
+
+    fun mapToEnity(things: List<MoreCommentResponse.TJson.Data.Thing>, position: Int, postId: String):List<CommentEntity> {
+        return things.mapIndexed { index, it ->
+            CommentEntity(
+                    it.data.id,
+                    it.data.author,
+                    it.data.body,
+                    "",
+                    0,
+                    it.data.createdUtc,
+                    it.data.depth,
+                    it.data.parentId,
+                    position + index,
+                    postId
+            )
+        }
+    }
 }

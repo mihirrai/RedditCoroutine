@@ -7,10 +7,13 @@ import androidx.room.PrimaryKey
 data class CommentEntity(
         @PrimaryKey
         val id: String,
-        val position:Int,
         val author: String?,
         val body: String?,
+        val children: String?,
+        val count: Int,
         val createdUtc: Int?,
+        val depth: Int,
         val parent: String,
-        val postId:String
+        val position: Int,
+        val postId: String
 )

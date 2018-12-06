@@ -40,7 +40,7 @@ abstract class ListAdapterWithHeader<T, VH : RecyclerView.ViewHolder>(
     /**
      * Accounts for header offset
      */
-    fun getItem(position: Int): T {
+    fun getItem(position: Int): T? {
         return mHelper.currentList[position - headerOffset]
     }
 

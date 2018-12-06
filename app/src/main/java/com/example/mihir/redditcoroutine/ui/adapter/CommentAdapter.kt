@@ -13,7 +13,8 @@ import com.example.mihir.redditcoroutine.ui.viewholder.MoreCommentViewHolder
 
 class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHolder>(diffCallBack) {
 
-    private var postEntity: PostEntity? =null
+    private var postEntity: PostEntity? = null
+    var onMoreItemClick: ((CommentEntity) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             R.layout.recycler_item_post_title -> CommentHeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_post_title, parent, false))
@@ -28,14 +29,18 @@ class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHol
         when (holder) {
             is CommentHeaderViewHolder -> holder.bindTo(postEntity)
             is CommentViewHolder -> holder.bindTo(getItem(position))
-            is MoreCommentViewHolder -> holder.bindTo(getItem(position))
+            is MoreCommentViewHolder -> {
+                holder.bindTo(getItem(position))
+                holder.itemView.setOnClickListener { onMoreItemClick!!.invoke(getItem(position)!!) }
+            }
+            else -> throw java.lang.IllegalArgumentException("Unknown holder $holder")
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
             position == HEADER_POSITION -> R.layout.recycler_item_post_title
-            getItem(position).body != null -> R.layout.recycler_item_comment
+            getItem(position)?.body != null -> R.layout.recycler_item_comment
             else -> R.layout.recycler_item_more_comment
         }
     }

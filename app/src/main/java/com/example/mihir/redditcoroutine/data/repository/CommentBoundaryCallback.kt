@@ -2,7 +2,7 @@ package com.example.mihir.redditcoroutine.data.repository
 
 import androidx.paging.PagedList
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
-import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
+import com.example.mihir.redditcoroutine.data.remote.response.PostDetailResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -44,11 +44,14 @@ class CommentBoundaryCallback(val tokenRepository: TokenRepository,
     fun mapToEntity(flattenedList: ArrayList<PostDetailResponse.Data.Children>, postId: String): List<CommentEntity> {
         return flattenedList.mapIndexed { index, children ->
             CommentEntity(children.data.id,
-                    index,
                     children.data.author,
-                    children.data.body.toString(),
+                    children.data.body,
+                    children.data.children?.joinToString(),
+                    children.data.count,
                     children.data.createdUtc,
+                    children.data.depth,
                     children.data.parentId,
+                    index,
                     postId
             )
         }

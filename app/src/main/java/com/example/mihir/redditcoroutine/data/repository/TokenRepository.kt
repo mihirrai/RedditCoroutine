@@ -4,7 +4,7 @@ import android.util.Base64
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.TokenEntity
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
-import com.example.mihir.redditcoroutine.data.remote.TokenResponse
+import com.example.mihir.redditcoroutine.data.remote.response.TokenResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

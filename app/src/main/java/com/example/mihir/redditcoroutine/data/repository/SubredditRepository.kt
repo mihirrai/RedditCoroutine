@@ -5,7 +5,7 @@ import androidx.paging.DataSource
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.SubredditEntity
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
-import com.example.mihir.redditcoroutine.data.remote.SubredditListResponse
+import com.example.mihir.redditcoroutine.data.remote.response.SubredditListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

@@ -14,4 +14,10 @@ interface CommentDao {
 
     @Query("SELECT * FROM comments WHERE postId = :postId ORDER BY position")
     fun posts(postId: String): DataSource.Factory<Int, CommentEntity>
+
+    @Query("UPDATE comments SET position = (:listSize+position-1) WHERE postId= :postId AND position > :addPosition")
+    fun updatePosition(addPosition: Int, listSize: Int, postId: String)
+
+    @Query("DELETE FROM comments WHERE postId= :postId AND position = :deletePosition")
+    fun deleteByPosition(deletePosition: Int, postId: String)
 }

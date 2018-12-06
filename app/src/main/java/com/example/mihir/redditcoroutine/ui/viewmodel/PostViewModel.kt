@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
-import com.example.mihir.redditcoroutine.data.remote.PostDetailResponse
+import com.example.mihir.redditcoroutine.data.remote.response.PostDetailResponse
 import com.example.mihir.redditcoroutine.data.repository.CommentBoundaryCallback
 import com.example.mihir.redditcoroutine.data.repository.PostDetailRepository
 import com.example.mihir.redditcoroutine.data.repository.TokenRepository
@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class PostViewModel(private val tokenRepository: TokenRepository, private val postDetailRepository: PostDetailRepository) : ViewModel(), CoroutineScope {
+
     val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
@@ -32,7 +33,7 @@ class PostViewModel(private val tokenRepository: TokenRepository, private val po
 
     fun localPost(id: String)=postDetailRepository.getLocalPost("t3_$id")
 
-    fun list(subreddit: String,postId:String)=LivePagedListBuilder<Int,CommentEntity>(postDetailRepository.getLocalComments(postId),10)
+    fun list(subreddit: String,postId:String)=LivePagedListBuilder<Int,CommentEntity>(postDetailRepository.getLocalComments(postId),200)
             .setBoundaryCallback(CommentBoundaryCallback(tokenRepository,postDetailRepository,subreddit,postId, CoroutineScope(coroutineContext)))
             .build()
 
@@ -48,6 +49,14 @@ class PostViewModel(private val tokenRepository: TokenRepository, private val po
         }
     }
 
+    fun loadMoreComments(postId: String, children: CommentEntity) {
+        launch {
+            val t=postDetailRepository.getMoreComments(tokenRepository.getToken().access_token,postId,children.children!!)
+            if (t.isSuccessful){
+                postDetailRepository.insertMoreComments(t.body()!!.json.data.things,children.position,postId)
+            }
+        }
+    }
     fun updateLocalPost(id: String) {
         launch {
             postDetailRepository.updateLocalPosts(id,

@@ -11,11 +11,13 @@ class MoreCommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val details = view.findViewById<TextView>(R.id.more_count_comment)
 
     fun bindTo(children: CommentEntity?) {
-//        if (children.count != 0)
-//            details.text = children.data.count.toString() + " more comments"
-//        else
-//            details.text="Continue Thread"
-//        itemView.setPadding(10 * children.data.depth, 0, 0, 0)
+        if (children != null) {
+            if (children.count != 0)
+                details.text = children.count.toString() + " more comments"
+            else
+                details.text = "Continue Thread"
+            itemView.setPadding(10 * children.depth, itemView.paddingTop, itemView.paddingRight, itemView.paddingBottom)
+        }
     }
 
 }

@@ -1,5 +1,6 @@
-package com.example.mihir.redditcoroutine.data.remote
+package com.example.mihir.redditcoroutine.data.remote.response
 
+import com.example.mihir.redditcoroutine.data.remote.AdapterCheck
 import com.squareup.moshi.Json
 
 data class PostDetailResponse(
@@ -34,7 +35,7 @@ data class PostDetailResponse(
                     @field:Json(name = "body_html")
                     val bodyHtml:String?,
                     @field:Json(name = "children")
-                    val children: List<String>,
+                    val children: List<String>?,
                     @field:Json(name = "count")
                     val count: Int,
                     @field:Json(name = "created_utc")

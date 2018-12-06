@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.data.remote
+package com.example.mihir.redditcoroutine.data.remote.response
 
 import com.squareup.moshi.Json
 

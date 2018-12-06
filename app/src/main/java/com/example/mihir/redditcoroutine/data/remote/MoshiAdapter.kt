@@ -1,5 +1,6 @@
 package com.example.mihir.redditcoroutine.data.remote
 
+import com.example.mihir.redditcoroutine.data.remote.response.PostDetailResponse
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
