@@ -15,5 +15,6 @@ data class CommentEntity(
         val depth: Int,
         val parent: String,
         val position: Int,
-        val postId: String
+        val postId: String,
+        val score: Int
 )

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log.d
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.FloatRange
@@ -87,7 +86,6 @@ class ImageActivity : AppCompatActivity() {
         animateDimmingOnEntry()
         loadImage()
         imageviewer_image_container.gestureListener = flickGestureListener()
-        d("url", intent.getStringExtra("url"))
     }
 
     fun loadImage() {

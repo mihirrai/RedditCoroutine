@@ -11,13 +11,13 @@ class PostSelftextViewHolder(view: View) : RecyclerView.ViewHolder(view), String
 
     val title = view.findViewById<TextView>(R.id.title_post)
     val details = view.findViewById<TextView>(R.id.details_post)
-    val selftext=view.findViewById<TextView>(R.id.selftext_post)
+    val selftext = view.findViewById<TextView>(R.id.selftext_post)
     val stats = view.findViewById<TextView>(R.id.stats_post)
 
     fun bindTo(item: PostEntity) {
         title.text = item.title
         details.text = getPostDetails(item, itemView.context)
-        getMarkDown(item.selftext, itemView.context, selftext)
+        setMarkdown(itemView.context, item.selftext!!, selftext)
         stats.text = getPostStats(item)
     }
 }

@@ -71,7 +71,7 @@ data class SubredditResponse(
                     @field:Json(name = "banned_by") val bannedBy: Any?,
                     @field:Json(name = "author_flair_type") val authorFlairType: String,
                     @field:Json(name = "contest_mode") val contestMode: Boolean,
-                    @field:Json(name = "selftext_html") val selftextHtml: Any?,
+                    @field:Json(name = "selftext_html") val selftextHtml: String?,
                     @field:Json(name = "likes") val likes: Any?,
                     @field:Json(name = "suggested_sort") val suggestedSort: Any?,
                     @field:Json(name = "banned_at_utc") val bannedAtUtc: Any?,

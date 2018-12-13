@@ -3,4 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="comment_level_1">#1565C0</color>
+    <color name="comment_level_2">#AB47BC</color>
+    <color name="comment_level_3">#43A047</color>
+    <color name="comment_level_4">#fbc02d</color>
+    <color name="comment_level_5">#ef5350</color>
 </resources>

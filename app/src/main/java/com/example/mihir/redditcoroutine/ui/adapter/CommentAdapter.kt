@@ -17,9 +17,9 @@ class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHol
     var onMoreItemClick: ((CommentEntity) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            R.layout.recycler_item_post_title -> CommentHeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_post_title, parent, false))
-            R.layout.recycler_item_comment -> CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_comment, parent, false))
-            R.layout.recycler_item_more_comment -> MoreCommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_more_comment, parent, false))
+            TYPE_HEADER -> CommentHeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_comment_header, parent, false))
+            TYPE_COMMENT -> CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_comment, parent, false))
+            TYPE_MORE_COMMENT -> MoreCommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_more_comment, parent, false))
             else -> throw IllegalArgumentException("Unknown view type $viewType")
         }
 
@@ -39,9 +39,9 @@ class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHol
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            position == HEADER_POSITION -> R.layout.recycler_item_post_title
-            getItem(position)?.body != null -> R.layout.recycler_item_comment
-            else -> R.layout.recycler_item_more_comment
+            position == HEADER_POSITION -> TYPE_HEADER
+            getItem(position)?.body != null -> TYPE_COMMENT
+            else -> TYPE_MORE_COMMENT
         }
     }
 
@@ -55,6 +55,9 @@ class CommentAdapter : ListAdapterWithHeader<CommentEntity, RecyclerView.ViewHol
 
     companion object {
         const val HEADER_POSITION = 0
+        const val TYPE_HEADER = 0
+        const val TYPE_COMMENT = 1
+        const val TYPE_MORE_COMMENT = 2
         private val diffCallBack = object : DiffUtil.ItemCallback<CommentEntity>() {
             override fun areItemsTheSame(oldItem: CommentEntity, newItem: CommentEntity): Boolean {
                 return oldItem.id == newItem.id

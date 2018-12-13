@@ -14,7 +14,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(),
         FragNavController.RootFragmentListener,
         BaseFragment.FragmentNavigation,
-        BaseFragment.ActivityNavigation {
+        BaseFragment.ActivityNavigation,
+        PostOptionsBottomSheet.ItemSelectedListener {
+    override fun viewSubreddit(fragment: SubredditFragment) {
+        fragNavController.clearDialogFragment()
+        fragNavController.pushFragment(fragment)
+    }
+
+    override fun viewProfile(author: String) {
+        
+    }
+
 
     val fragNavController: FragNavController = FragNavController(supportFragmentManager, R.id.container)
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -71,11 +81,11 @@ class MainActivity : AppCompatActivity(),
         get() = 2
 
     override fun getRootFragment(index: Int): Fragment {
-        when (index) {
-            0 -> return HomeFragment()
-            1 -> return SubredditListFragment()
+        return when (index) {
+            0 -> HomeFragment()
+            1 -> SubredditListFragment()
+            else -> throw IllegalStateException("Unkown Index")
         }
-        throw IllegalStateException("Unkown Index")
     }
 
     override fun onBackPressed() {

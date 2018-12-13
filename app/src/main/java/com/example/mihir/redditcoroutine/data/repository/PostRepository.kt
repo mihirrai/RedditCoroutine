@@ -8,6 +8,7 @@ import com.example.mihir.redditcoroutine.data.remote.response.SubredditResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class PostRepository(val database: AppDatabase) {
@@ -41,25 +42,18 @@ class PostRepository(val database: AppDatabase) {
     }
 
     suspend fun refreshPosts(accessToken: String, subredditName: String) = coroutineScope {
-        async(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             val posts = getRemotePosts(accessToken, subredditName, "")
             if (posts.isSuccessful)
                 database.runInTransaction {
                     database.postDao().deleteBySubreddit(subredditName)
                     database.postDao().insertList(mapToEntity(posts.body()!!.data.children, subredditName))
                 }
-        }.await()
+        }
     }
 
     fun mapToEntity(children: List<SubredditResponse.Data.Children>, subredditName: String): List<PostEntity> {
         return children.map { children ->
-
-            val previewUrl = if (children.data.preview != null) {
-                if (children.data.preview.images.get(0).resolutions.isNotEmpty())
-                    children.data.preview.images.get(0).resolutions.last().url
-                else ""
-            } else
-                null
             PostEntity(children.data.name,
                     children.data.title,
                     children.data.author,
@@ -71,9 +65,9 @@ class PostRepository(val database: AppDatabase) {
                     children.data.linkFlairText,
                     children.data.gilded,
                     subredditName,
-                    previewUrl,
+                    children.data.preview?.images?.get(0)?.source?.url,
                     children.data.url,
-                    children.data.selftext,
+                    children.data.selftextHtml,
                     children.data.isSelf)
         }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fb4469640d383fa26e76ea8f7562c9fd",
+    "identityHash": "ebd3bac37901e6c244833e8bc1186140",
     "entities": [
       {
         "tableName": "tokens",
@@ -56,7 +56,7 @@
       },
       {
         "tableName": "posts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `author` TEXT NOT NULL, `score` INTEGER NOT NULL, `subreddit` TEXT NOT NULL, `numComments` INTEGER NOT NULL, `createdUtc` INTEGER NOT NULL, `nsfw` INTEGER NOT NULL, `flair` TEXT, `gilded` INTEGER NOT NULL, `sourceSubreddit` TEXT NOT NULL, `thumbnailUrl` TEXT, `url` TEXT NOT NULL, `selftext` TEXT NOT NULL, `isSelf` INTEGER NOT NULL, PRIMARY KEY(`id`, `sourceSubreddit`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `author` TEXT NOT NULL, `score` INTEGER NOT NULL, `subreddit` TEXT NOT NULL, `numComments` INTEGER NOT NULL, `createdUtc` INTEGER NOT NULL, `nsfw` INTEGER NOT NULL, `flair` TEXT, `gilded` INTEGER NOT NULL, `sourceSubreddit` TEXT NOT NULL, `thumbnailUrl` TEXT, `url` TEXT NOT NULL, `selftext` TEXT, `isSelf` INTEGER NOT NULL, PRIMARY KEY(`id`, `sourceSubreddit`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -140,7 +140,7 @@
             "fieldPath": "selftext",
             "columnName": "selftext",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "isSelf",
@@ -199,7 +199,7 @@
       },
       {
         "tableName": "comments",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `author` TEXT, `body` TEXT, `children` TEXT, `count` INTEGER NOT NULL, `createdUtc` INTEGER, `depth` INTEGER NOT NULL, `parent` TEXT NOT NULL, `position` INTEGER NOT NULL, `postId` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `author` TEXT, `body` TEXT, `children` TEXT, `count` INTEGER NOT NULL, `createdUtc` INTEGER, `depth` INTEGER NOT NULL, `parent` TEXT NOT NULL, `position` INTEGER NOT NULL, `postId` TEXT NOT NULL, `score` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -260,6 +260,12 @@
             "columnName": "postId",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "score",
+            "columnName": "score",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -274,7 +280,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"fb4469640d383fa26e76ea8f7562c9fd\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ebd3bac37901e6c244833e8bc1186140\")"
     ]
   }
 }

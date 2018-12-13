@@ -1,7 +1,6 @@
 package com.example.mihir.redditcoroutine.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(tableName = "posts",primaryKeys = ["id","sourceSubreddit"])
 data class PostEntity(
@@ -18,6 +17,6 @@ data class PostEntity(
         val sourceSubreddit: String,
         val thumbnailUrl:String?,
         val url:String,
-        val selftext:String,
+        val selftext: String?,
         val isSelf:Boolean
 )

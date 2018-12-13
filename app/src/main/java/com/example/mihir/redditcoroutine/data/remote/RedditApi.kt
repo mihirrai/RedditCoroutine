@@ -25,20 +25,20 @@ interface RedditAPI {
     fun authorize(@HeaderMap headers: Map<String, String>,
                   @FieldMap fields: Map<String, String>): Deferred<Response<TokenResponse>>
 
-    @GET(".")
+    @GET("./?raw_json=1")
     fun getFrontpage(@HeaderMap headers: Map<String, String>,
                      @Query("after") after: String): Deferred<Response<SubredditResponse>>
 
-    @GET("/r/{subreddit}/")
+    @GET("/r/{subreddit}/?raw_json=1")
     fun getSubreddit(@HeaderMap headers: Map<String, String>,
                      @Path("subreddit") subreddit: String,
                      @QueryMap options: Map<String, String>): Deferred<Response<SubredditResponse>>
 
-    @GET("subreddits/")
+    @GET("subreddits/?raw_json=1")
     fun getSubredditList(@HeaderMap headers: Map<String, String>,
                          @QueryMap options: Map<String, String>): Deferred<Response<SubredditListResponse>>
 
-    @GET("subreddits/default/")
+    @GET("subreddits/default/?raw_json=1")
     fun getDefaultSubreddits(@HeaderMap headers: Map<String, String>,
                              @QueryMap options: Map<String, String>): Deferred<Response<SubredditListResponse>>
 
@@ -47,11 +47,12 @@ interface RedditAPI {
                        @Path("subreddit") subreddit: String,
                        @Path("article") article: String): Deferred<Response<List<PostDetailResponse>>>
 
-    @GET("/api/morechildren/")
+    @GET("/api/morechildren/?raw_json=1")
     fun getMoreComments(@HeaderMap headers: Map<String, String>,
                         @QueryMap options: Map<String, String>): Deferred<Response<MoreCommentResponse>>
 
     companion object {
+
         private const val BASE_URL = "https://www.reddit.com/"
         private const val OAUTH_URL = "https://oauth.reddit.com/"
         val api = create(HttpUrl.parse(BASE_URL)!!)
@@ -75,6 +76,7 @@ interface RedditAPI {
                     .addConverterFactory(MoshiConverterFactory.create(moshi))
                     .build()
                     .create(RedditAPI::class.java)
+
         }
     }
 }

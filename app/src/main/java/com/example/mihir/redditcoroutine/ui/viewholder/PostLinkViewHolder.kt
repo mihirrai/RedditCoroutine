@@ -1,6 +1,5 @@
 package com.example.mihir.redditcoroutine.ui.viewholder
 
-import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,7 +22,7 @@ class PostLinkViewHolder(view: View) : RecyclerView.ViewHolder(view), StringUtil
         stats.text = getPostStats(item)
         thumbnail.setOnClickListener { onMediaClick?.invoke(item) }
         GlideApp.with(itemView)
-                .load(Html.fromHtml(item.thumbnailUrl).toString())
+                .load(item.thumbnailUrl)
                 .centerCrop()
                 .into(thumbnail)
     }

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mihir.redditcoroutine.Injection
 import com.example.mihir.redditcoroutine.R
@@ -38,21 +37,18 @@ class HomeFragment : BaseFragment() {
 
         view.recyclerview_posts_home.adapter = adapter
         view.recyclerview_posts_home.layoutManager = LinearLayoutManager(activity)
-        view.recyclerview_posts_home.addItemDecoration(DividerItemDecoration(context, 1))
+//        view.recyclerview_posts_home.addItemDecoration(DividerItemDecoration(context, 1))
         view.recyclerview_posts_home.setItemViewCacheSize(20)
 
-        adapter.onItemClick = {
-            fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id))
-        }
-
-        adapter.onMediaClick = {
-            activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url))
+        adapter.apply {
+            onItemClick = { fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id)) }
+            onMediaClick = { activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url)) }
+            onOptionsClick = { fragmentNavigation.pushDialogFragment(PostOptionsBottomSheet.newInstance(it.author, it.subreddit, it.id)) }
         }
 
 
         swipe_refresh.setOnRefreshListener {
             viewModel.refresh()
-            view.recyclerview_posts_home.scrollToPosition(0)
         }
     }
 

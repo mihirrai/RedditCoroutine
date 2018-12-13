@@ -1,6 +1,7 @@
 package com.example.mihir.redditcoroutine.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -15,10 +16,11 @@ class SubredditPostsListAdapter : PagedListAdapter<PostEntity, RecyclerView.View
 
     var onItemClick: ((PostEntity) -> Unit)? = null
     var onMediaClick: ((PostEntity) -> Unit)? = null
+    var onOptionsClick: ((PostEntity) -> Unit)? = null
     override fun getItemViewType(position: Int): Int {
         return when {
-            getItem(position)!!.isSelf && getItem(position)!!.selftext != "" -> TYPE_SELFTEXT
-            getItem(position)!!.thumbnailUrl != null -> TYPE_LINK
+            getItem(position)?.selftext != null -> TYPE_SELFTEXT
+            getItem(position)?.thumbnailUrl != null -> TYPE_LINK
             else -> TYPE_TITLE
         }
     }
@@ -41,6 +43,9 @@ class SubredditPostsListAdapter : PagedListAdapter<PostEntity, RecyclerView.View
             }
             holder.itemView.setOnClickListener {
                 onItemClick?.invoke(getItem(position)!!)
+            }
+            holder.itemView.findViewById<View>(R.id.toolbar_post).findViewById<android.widget.ImageView>(R.id.options).setOnClickListener {
+                onOptionsClick?.invoke(getItem(position)!!)
             }
         }
 

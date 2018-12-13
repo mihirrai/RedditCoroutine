@@ -1,17 +1,16 @@
 package com.example.mihir.redditcoroutine.data.repository
 
-import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
+import com.example.mihir.redditcoroutine.data.remote.RedditAPI
 import com.example.mihir.redditcoroutine.data.remote.response.MoreCommentResponse
 import com.example.mihir.redditcoroutine.data.remote.response.PostDetailResponse
-import com.example.mihir.redditcoroutine.data.remote.RedditAPI
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class PostDetailRepository(val database: AppDatabase) {
@@ -41,9 +40,9 @@ class PostDetailRepository(val database: AppDatabase) {
 
     suspend fun updateLocalPosts(id: String, score: Int, numComments: Int) {
         coroutineScope {
-            async(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 database.postDao().updateEntity(id, score, numComments)
-            }.await()
+            }
         }
     }
 
@@ -53,40 +52,36 @@ class PostDetailRepository(val database: AppDatabase) {
 
     suspend fun insertComments(comments: List<CommentEntity>) {
         return coroutineScope {
-            async(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 database.commentDao().insert(comments)
-            }.await()
+            }
         }
     }
 
     suspend fun insertMoreComments(things: List<MoreCommentResponse.TJson.Data.Thing>, position: Int, postId: String) {
         return coroutineScope {
-            async(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 database.commentDao().deleteByPosition(position, postId)
-            }.await()
-            async(Dispatchers.IO) {
-                d("size",things.size.toString())
                 database.commentDao().updatePosition(position, things.size, postId)
-            }.await()
-            async(Dispatchers.IO) {
-                database.commentDao().insert(mapToEnity(things,position,postId))
-            }.await()
+                database.commentDao().insert(mapToEnity(things, position, postId))
+            }
         }
     }
 
-    fun mapToEnity(things: List<MoreCommentResponse.TJson.Data.Thing>, position: Int, postId: String):List<CommentEntity> {
+    fun mapToEnity(things: List<MoreCommentResponse.TJson.Data.Thing>, position: Int, postId: String): List<CommentEntity> {
         return things.mapIndexed { index, it ->
             CommentEntity(
                     it.data.id,
                     it.data.author,
-                    it.data.body,
+                    it.data.bodyHtml,
                     "",
                     0,
                     it.data.createdUtc,
                     it.data.depth,
                     it.data.parentId,
                     position + index,
-                    postId
+                    postId,
+                    it.data.score
             )
         }
     }

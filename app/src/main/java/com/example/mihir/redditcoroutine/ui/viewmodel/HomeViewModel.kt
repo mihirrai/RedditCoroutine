@@ -20,8 +20,8 @@ class HomeViewModel(val tokenRepository: TokenRepository, val postRepository: Po
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
-    val loading= MutableLiveData<Boolean>().apply {
-        value=false
+    val loading = MutableLiveData<Boolean>().apply {
+        value = false
     }
 
     val livePagedListBuilder = LivePagedListBuilder<Int, PostEntity>(postRepository.getLocalPosts(""), 10)

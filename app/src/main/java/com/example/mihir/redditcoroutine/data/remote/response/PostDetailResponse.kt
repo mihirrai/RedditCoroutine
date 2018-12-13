@@ -44,6 +44,8 @@ data class PostDetailResponse(
                     val depth: Int,
                     @field:Json(name = "id")
                     val id: String,
+                    @field:Json(name = "is_submitter")
+                    val isSubmitter: Boolean,
                     @field:Json(name = "name")
                     val name: String,
                     @field:Json(name="num_comments")
