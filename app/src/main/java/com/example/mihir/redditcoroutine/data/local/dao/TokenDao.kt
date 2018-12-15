@@ -13,7 +13,7 @@ interface TokenDao {
     fun insertToken(tokenEntity: TokenEntity)
 
     @Query("SELECT * FROM tokens WHERE active=1")
-    fun activeToken(): List<TokenEntity>
+    suspend fun activeToken(): TokenEntity
 
     @Query("UPDATE tokens SET access_token=:accessToken, expiry=:expiry WHERE refresh_token=:refreshToken")
     fun updateToken(refreshToken: String, accessToken: String, expiry: OffsetDateTime)

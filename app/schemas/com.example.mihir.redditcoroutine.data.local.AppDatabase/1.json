@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ebd3bac37901e6c244833e8bc1186140",
+    "identityHash": "a696458dc9d628521e6cada98b9159e7",
     "entities": [
       {
         "tableName": "tokens",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `scope` TEXT NOT NULL, `access_token` TEXT NOT NULL, `expiry` TEXT NOT NULL, `refresh_token` TEXT NOT NULL, `active` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`refresh_token` TEXT NOT NULL, `scope` TEXT NOT NULL, `access_token` TEXT NOT NULL, `expiry` TEXT NOT NULL, `active` INTEGER NOT NULL, PRIMARY KEY(`refresh_token`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "refresh_token",
+            "columnName": "refresh_token",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -33,12 +33,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "refresh_token",
-            "columnName": "refresh_token",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "active",
             "columnName": "active",
             "affinity": "INTEGER",
@@ -47,9 +41,9 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "refresh_token"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -278,9 +272,10 @@
         "foreignKeys": []
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ebd3bac37901e6c244833e8bc1186140\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a696458dc9d628521e6cada98b9159e7\")"
     ]
   }
 }

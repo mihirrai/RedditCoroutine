@@ -13,6 +13,7 @@ import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.SubredditPostsListAdapter
 import com.example.mihir.redditcoroutine.ui.viewmodel.SubredditViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.subreddit_fragment.*
 import kotlinx.android.synthetic.main.subreddit_fragment.view.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -20,21 +21,14 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 class SubredditFragment : BaseFragment() {
 
-    companion object {
-        fun newInstance(subredditName: String): SubredditFragment {
-            val args = Bundle()
-            args.putString("subreddit", subredditName)
-            val fragment = SubredditFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
-    val adapter = SubredditPostsListAdapter()
-
     private lateinit var viewModel: SubredditViewModel
     private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var subreddit: String
+    private val postsListAdapter = SubredditPostsListAdapter().apply {
+        onItemClick = { fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id)) }
+        onMediaClick = { activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url)) }
+        onOptionsClick = { fragmentNavigation.pushDialogFragment(PostOptionsBottomSheet.newInstance(it.author, it.subreddit, it.id)) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,14 +42,10 @@ class SubredditFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         toolbar.title = subreddit
         fragmentNavigation.setToolbar(toolbar)
-        view.recyclerview_posts_subreddit.adapter = adapter
-        view.recyclerview_posts_subreddit.layoutManager = LinearLayoutManager(activity)
-        view.recyclerview_posts_subreddit.addItemDecoration(DividerItemDecoration(context, 1))
-        adapter.onItemClick = {
-            fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id))
-        }
-        adapter.onMediaClick = {
-            activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url))
+        view.recyclerview_posts_subreddit.apply {
+            adapter = postsListAdapter
+            layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(DividerItemDecoration(context, 1))
         }
         swipe_refresh.setOnRefreshListener {
             viewModel.refresh(subreddit)
@@ -67,10 +57,23 @@ class SubredditFragment : BaseFragment() {
         viewModelFactory = Injection.provideViewModelFactory(context!!.applicationContext)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubredditViewModel::class.java)
         viewModel.provide(subreddit).observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            postsListAdapter.submitList(it)
         })
         viewModel.loading.observe(viewLifecycleOwner, Observer {
             swipe_refresh.isRefreshing = it
         })
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            Snackbar.make(this.view!!, it, Snackbar.LENGTH_LONG).show()
+        })
+    }
+
+    companion object {
+        fun newInstance(subredditName: String): SubredditFragment {
+            val args = Bundle()
+            args.putString("subreddit", subredditName)
+            val fragment = SubredditFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

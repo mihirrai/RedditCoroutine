@@ -35,6 +35,15 @@ class PostDetailRepository(val database: AppDatabase) {
 
     fun getLocalPost(id: String): LiveData<PostEntity> {
         return database.postDao().getPostById(id)
+    }
+
+    suspend fun refreshComments() = coroutineScope {
+        withContext(Dispatchers.IO) {
+            val comments = getRemoteComments()
+        }
+    }
+
+    private fun getRemoteComments() {
 
     }
 

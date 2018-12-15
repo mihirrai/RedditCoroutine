@@ -6,9 +6,10 @@ import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.SubredditEntity
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
 import com.example.mihir.redditcoroutine.data.remote.response.SubredditListResponse
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class SubredditRepository(val database: AppDatabase) {
@@ -19,23 +20,23 @@ class SubredditRepository(val database: AppDatabase) {
         return database.subredditDao().subreddits(refreshToken)
     }
 
-    suspend fun getRemoteSubreddits(accessToken: String, scope: String, after: String): Response<SubredditListResponse> {
+    fun getRemoteSubreddits(accessToken: String, scope: String, after: String): Deferred<Response<SubredditListResponse>> {
         val headers = HashMap<String, String>()
         val options = HashMap<String, String>()
         headers["Authorization"] = "Bearer $accessToken"
         options["after"] = after
         d("scope", (scope == "*").toString())
         return if (scope == "*")
-            oauth.getDefaultSubreddits(headers, options).await()
+            oauth.getDefaultSubreddits(headers, options)
         else
-            oauth.getSubredditList(headers, options).await()
+            oauth.getSubredditList(headers, options)
     }
 
 
     suspend fun saveSubreddits(body: SubredditListResponse, refreshToken: String) = coroutineScope {
-        async(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             val subreddits = body.data.children.map { children -> SubredditEntity(children.data.name, children.data.displayName, refreshToken,children.data.iconImg) }
             database.subredditDao().insert(subreddits)
-        }.await()
+        }
     }
 }

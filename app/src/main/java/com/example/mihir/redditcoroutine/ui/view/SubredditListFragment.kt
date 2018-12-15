@@ -13,16 +13,18 @@ import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.SubredditListListAdapter
 import com.example.mihir.redditcoroutine.ui.viewmodel.SubredditListViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.subreddit_list_fragment.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 class SubredditListFragment : BaseFragment() {
 
-
-    val adapter = SubredditListListAdapter()
-
     private lateinit var viewModel: SubredditListViewModel
     private lateinit var viewModelFactory: ViewModelFactory
+
+    private val subredditListAdapter = SubredditListListAdapter().apply {
+        onItemClick = { fragmentNavigation.pushFragment(SubredditFragment.newInstance(it.subredditName)) }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -32,35 +34,26 @@ class SubredditListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentNavigation.setToolbar(toolbar)
-
-        view.recyclerview_subreddits.adapter = adapter
-        view.recyclerview_subreddits.layoutManager = LinearLayoutManager(activity)
-        view.recyclerview_subreddits.addItemDecoration(DividerItemDecoration(context, 1))
-
-        adapter.onItemClick = {
-            fragmentNavigation.pushFragment(SubredditFragment.newInstance(it.subredditName))
+        view.recyclerview_subreddits.apply {
+            adapter = subredditListAdapter
+            layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(DividerItemDecoration(context, 1))
         }
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModelFactory = Injection.provideViewModelFactory(context!!.applicationContext)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubredditListViewModel::class.java)
 
-        viewModel.token.observe(viewLifecycleOwner, Observer { it ->
-            if (it.isEmpty())
-                viewModel.getToken()
-            else
-                viewModel.provide(it).observe(viewLifecycleOwner, Observer { list ->
-                    adapter.submitList(list)
-                })
+        viewModel.tokenEntity.observe(viewLifecycleOwner, Observer { token ->
+            viewModel.provide(token.refresh_token).observe(viewLifecycleOwner, Observer {
+                subredditListAdapter.submitList(it)
+            })
         })
 
-
-//        viewModel.recycler_item_post_link().observe(this, Observer {
-//            d("size",it.size.toString())
-//            adapter.submitList(it)
-//        })
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            Snackbar.make(this.view!!, it, Snackbar.LENGTH_LONG).show()
+        })
     }
 }

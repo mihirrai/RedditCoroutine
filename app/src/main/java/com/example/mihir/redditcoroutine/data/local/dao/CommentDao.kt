@@ -20,4 +20,7 @@ interface CommentDao {
 
     @Query("DELETE FROM comments WHERE postId= :postId AND position = :deletePosition")
     fun deleteByPosition(deletePosition: Int, postId: String)
+
+    @Query("DELETE FROM comments WHERE postId= :postId")
+    fun deleteByPost(postId: String)
 }

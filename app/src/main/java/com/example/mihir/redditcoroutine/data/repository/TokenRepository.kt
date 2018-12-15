@@ -5,10 +5,10 @@ import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.TokenEntity
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
 import com.example.mihir.redditcoroutine.data.remote.response.TokenResponse
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.threeten.bp.OffsetDateTime
 import retrofit2.Response
 
@@ -17,38 +17,33 @@ class TokenRepository(val database: AppDatabase) {
     val api = RedditAPI.api
 
     suspend fun getToken(): TokenEntity {
-        var token: TokenEntity? = null
-        coroutineScope {
-            async {
-                val listLocal = getLocalAccessToken()
-                when (listLocal.isEmpty()) {
-                    true -> {
-                        var remoteToken = getRemoteAccessToken()
-                        if (remoteToken.isSuccessful) {
-                            insertToken(TokenEntity(0, remoteToken.body()!!.scope, remoteToken.body()!!.accessToken, OffsetDateTime.now().plusSeconds(remoteToken.body()!!.expiresIn.toLong()), remoteToken.body()!!.refreshToken, 1))
-                            token = TokenEntity(0, remoteToken.body()!!.scope, remoteToken.body()!!.accessToken, OffsetDateTime.now().plusSeconds(remoteToken.body()!!.expiresIn.toLong()), remoteToken.body()!!.refreshToken, 1)
-                        }
-                    }
-                    false -> {
-                        var localToken = listLocal[0]
-                        if (localToken.expiry.isBefore(OffsetDateTime.now())) {
-                            var refreshToken = refreshAccessToken(localToken.refresh_token)
-                            if (refreshToken.isSuccessful) {
-                                updateToken(localToken.refresh_token, refreshToken.body()!!.accessToken, OffsetDateTime.now().plusSeconds(refreshToken.body()!!.expiresIn.toLong()))
-                                token = getLocalAccessToken()[0]
-                            }
-                        } else {
-                            token = localToken
-                        }
-                    }
+        val token = getLocalAccessToken()
+        when {
+            token == null -> {
+                val response = getRemoteAccessToken().await()
+                val newToken = mapToEntity(response.body()!!)
+                insertToken(newToken)
+                return newToken
+            }
+            token.expiry.isBefore(OffsetDateTime.now()) -> {
+                val response = refreshAccessToken(token.refresh_token).await()
+                val newToken = response.body()!!
+                with(newToken) {
+                    updateToken(token.refresh_token, this.accessToken, OffsetDateTime.now().plusSeconds(this.expiresIn.toLong()))
                 }
-            }.await()
+                return getLocalAccessToken()
+            }
+            else -> {
+                return token
+            }
         }
-
-        return token!!
     }
 
-    private suspend fun getRemoteAccessToken(): Response<TokenResponse> {
+    private fun mapToEntity(tokenResponse: TokenResponse): TokenEntity {
+        return TokenEntity(tokenResponse.refreshToken, tokenResponse.scope, tokenResponse.accessToken, OffsetDateTime.now().plusSeconds(tokenResponse.expiresIn.toLong()), 1)
+    }
+
+    private fun getRemoteAccessToken(): Deferred<Response<TokenResponse>> {
         val headers = HashMap<String, String>()
         val fields = HashMap<String, String>()
         val auth = Base64.encodeToString("l3_rEXGA5nyt9A:".toByteArray(), Base64.NO_WRAP)
@@ -58,10 +53,10 @@ class TokenRepository(val database: AppDatabase) {
         fields["device_id"] = "DO_NOT_TRACK_THIS_DEVICE"
         fields["duration"] = "permanent"
 
-        return api.getAccessToken(headers, fields).await()
+        return api.getAccessToken(headers, fields)
     }
 
-    private suspend fun refreshAccessToken(refreshToken: String): Response<TokenResponse> {
+    private fun refreshAccessToken(refreshToken: String): Deferred<Response<TokenResponse>> {
         val headers = HashMap<String, String>()
         val fields = HashMap<String, String>()
         val auth = Base64.encodeToString("l3_rEXGA5nyt9A:".toByteArray(), Base64.NO_WRAP)
@@ -70,26 +65,22 @@ class TokenRepository(val database: AppDatabase) {
         fields["grant_type"] = "refresh_token"
         fields["refresh_token"] = refreshToken
 
-        return api.getAccessToken(headers, fields).await()
+        return api.getAccessToken(headers, fields)
     }
 
-    private suspend fun getLocalAccessToken(): List<TokenEntity> {
-        return coroutineScope {
-            async(Dispatchers.IO) {
-                database.tokenDao().activeToken()
-            }.await()
-        }
+    private suspend fun getLocalAccessToken(): TokenEntity {
+        return database.tokenDao().activeToken()
     }
 
-    suspend fun insertToken(tokenEntity: TokenEntity) = coroutineScope {
-        launch(Dispatchers.IO) {
+    private suspend fun insertToken(tokenEntity: TokenEntity) = coroutineScope {
+        withContext(Dispatchers.IO) {
             database.tokenDao().insertToken(tokenEntity)
         }
     }
 
-    suspend fun updateToken(refresh_token: String, accessToken: String, now: OffsetDateTime) = coroutineScope {
-        async(Dispatchers.IO) {
+    private suspend fun updateToken(refresh_token: String, accessToken: String, now: OffsetDateTime) = coroutineScope {
+        withContext(Dispatchers.IO) {
             database.tokenDao().updateToken(refresh_token, accessToken, now)
-        }.await()
+        }
     }
 }

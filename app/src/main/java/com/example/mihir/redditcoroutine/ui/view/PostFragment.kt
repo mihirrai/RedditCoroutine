@@ -13,6 +13,7 @@ import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.CommentAdapter
 import com.example.mihir.redditcoroutine.ui.viewmodel.PostViewModel
+import kotlinx.android.synthetic.main.post_fragment.*
 import kotlinx.android.synthetic.main.post_fragment.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -54,8 +55,8 @@ class PostFragment : BaseFragment() {
         view.recyclerview_comments.layoutManager = LinearLayoutManager(activity)
         view.recyclerview_comments.addItemDecoration(DividerItemDecoration(context, 1))
 
-        adapter.onMoreItemClick={
-            viewModel.loadMoreComments(id,it)
+        adapter.onMoreItemClick = {
+            viewModel.loadMoreComments(id, it)
         }
 
     }
@@ -64,11 +65,6 @@ class PostFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         viewModelFactory = Injection.provideViewModelFactory(context!!.applicationContext)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(PostViewModel::class.java)
-//        if (viewModel.res.value == null) {
-//            viewModel.loading.value = true
-//            viewModel.getLocalPost("t3_$id")
-//            viewModel.test(subreddit, id)
-//        }
 
         viewModel.localPost(id).observe(viewLifecycleOwner, Observer {
             adapter.setHeaderItem(it)
@@ -77,24 +73,9 @@ class PostFragment : BaseFragment() {
         viewModel.list(subreddit, id).observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
-//        viewModel.res.observe(viewLifecycleOwner, Observer {
-//            viewModel.updateLocalPost("t3_$id")
-//        })
-//
-//        viewModel.loading.observe(viewLifecycleOwner, Observer {
-//            swipe_refresh.isRefreshing = it
-//        })
-//
-//
-//        viewModel.localPost.observe(viewLifecycleOwner, Observer {
-//            title_post.text = it.title
-//            details_post.text = getPostDetails(it, this.context!!)
-//            stats_post.text = getPostStats(it)
-//        })
-//
-//        viewModel.comms.observe(viewLifecycleOwner, Observer {
-//            adapter.submitList(it)
-//            recyclerview_comments.visibility = View.VISIBLE
-//        })
+
+        viewModel.loading.observe(viewLifecycleOwner, Observer {
+            swipe_refresh.isRefreshing = it
+        })
     }
 }

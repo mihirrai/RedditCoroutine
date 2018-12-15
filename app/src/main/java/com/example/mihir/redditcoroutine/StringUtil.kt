@@ -2,9 +2,11 @@ package com.example.mihir.redditcoroutine
 
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.text.util.Linkify
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
@@ -43,6 +45,14 @@ interface StringUtil {
         val node = parser.parse(markdown)
         val text = SpannableRenderer().render(configuration, node)
         BetterLinkMovementMethod.linkify(Linkify.ALL, textView)
+                .setOnLinkClickListener { textView, url ->
+                    if (!url.startsWith("/")) {
+                        val tabBuilder = CustomTabsIntent.Builder()
+                        val tabIntent = tabBuilder.build()
+                        tabIntent.launchUrl(context, Uri.parse(url))
+                    }
+                    true
+                }
         Markwon.unscheduleTableRows(textView)
         Markwon.unscheduleDrawables(textView)
         textView.text = text
