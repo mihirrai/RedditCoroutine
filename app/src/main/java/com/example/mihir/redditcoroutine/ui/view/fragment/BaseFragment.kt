@@ -29,7 +29,7 @@ open class BaseFragment : Fragment() {
     }
 
     interface ActivityNavigation {
-        fun startActivity(intent: Intent)
+        fun startNewActivity(intent: Intent)
         fun startActivityForResult(newIntent: Intent)
     }
 }

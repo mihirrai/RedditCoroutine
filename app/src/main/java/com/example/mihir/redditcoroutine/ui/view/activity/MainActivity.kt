@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(),
         fragNavController.showDialogFragment(dialogFragment)
     }
 
-    override fun startActivity(intent: Intent) {
+    override fun startNewActivity(intent: Intent) {
         startActivity(intent)
     }
 

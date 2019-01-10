@@ -21,8 +21,12 @@ interface StringUtil {
             detailStringBuilder.append("NSFW$separator")
             detailStringBuilder.setSpan(ForegroundColorSpan(Color.RED), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        if (postEntity.flair != null)
-            detailStringBuilder.append(postEntity.flair + separator)
+        if (postEntity.flair != null) {
+            val flair = SpannableStringBuilder()
+            flair.append(postEntity.flair + separator)
+            flair.setSpan(ForegroundColorSpan(Color.BLUE), 0, flair.length - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            detailStringBuilder.append(flair)
+        }
         detailStringBuilder.append(postEntity.author + separator +
                 postEntity.subreddit + separator +
                 getTimeAgo(postEntity.createdUtc.toLong() * 1000))

@@ -21,7 +21,9 @@ class PostLinkViewHolder(view: View) : RecyclerView.ViewHolder(view), StringUtil
         title.text = item.title
         details.text = getPostDetails(item, itemView.context)
         stats.text = getPostStats(item)
-        thumbnail.setOnClickListener { onMediaClick?.invoke(item) }
+        thumbnail.setOnClickListener {
+            onMediaClick?.invoke(item)
+        }
         if (!item.nsfw)
             GlideApp.with(itemView)
                     .load(item.thumbnailUrl)

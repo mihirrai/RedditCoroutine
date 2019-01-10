@@ -28,7 +28,7 @@ class SubredditFragment : BaseFragment() {
     private lateinit var subreddit: String
     private val postsListAdapter = SubredditPostsListAdapter().apply {
         onItemClick = { fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id)) }
-        onMediaClick = { activityNavigation.startActivity(ImageActivity.newIntent(context!!, it.url)) }
+        onMediaClick = { activityNavigation.startNewActivity(ImageActivity.newIntent(context!!, it.url)) }
         onOptionsClick = { fragmentNavigation.pushDialogFragment(PostOptionsBottomSheet.newInstance(it.author, it.subreddit, it.id)) }
     }
 
