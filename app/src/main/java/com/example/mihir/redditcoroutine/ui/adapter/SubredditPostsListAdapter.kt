@@ -19,7 +19,7 @@ class SubredditPostsListAdapter : PagedListAdapter<PostEntity, RecyclerView.View
     var onOptionsClick: ((PostEntity) -> Unit)? = null
     override fun getItemViewType(position: Int): Int {
         return when {
-            getItem(position)?.selftext != null -> TYPE_SELFTEXT
+            getItem(position)?.selftext != "" -> TYPE_SELFTEXT
             getItem(position)?.thumbnailUrl != null -> TYPE_LINK
             else -> TYPE_TITLE
         }

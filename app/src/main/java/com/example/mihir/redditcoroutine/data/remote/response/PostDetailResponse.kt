@@ -31,7 +31,7 @@ data class PostDetailResponse(
                     @field:Json(name = "author")
                     val author:String,
                     @field:Json(name = "body")
-                    val body:String?,
+                    val body: String,
                     @field:Json(name = "body_html")
                     val bodyHtml:String?,
                     @field:Json(name = "children")

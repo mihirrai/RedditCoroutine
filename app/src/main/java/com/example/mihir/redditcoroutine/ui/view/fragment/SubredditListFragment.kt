@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,7 @@ import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.SubredditListListAdapter
 import com.example.mihir.redditcoroutine.ui.viewmodel.SubredditListViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.subreddit_list_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_subreddit_list.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 class SubredditListFragment : BaseFragment() {
@@ -28,7 +28,7 @@ class SubredditListFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.subreddit_list_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_subreddit_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

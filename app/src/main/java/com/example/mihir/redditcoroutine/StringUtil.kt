@@ -2,14 +2,12 @@ package com.example.mihir.redditcoroutine
 
 import android.content.Context
 import android.graphics.Color
-import android.net.Uri
+import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.util.Linkify
+import android.text.style.ForegroundColorSpan
 import android.widget.TextView
-import androidx.browser.customtabs.CustomTabsIntent
 import com.example.mihir.redditcoroutine.data.local.entity.CommentEntity
 import com.example.mihir.redditcoroutine.data.local.entity.PostEntity
-import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import ru.noties.markwon.Markwon
 import ru.noties.markwon.SpannableConfiguration
 import ru.noties.markwon.renderer.SpannableRenderer
@@ -19,8 +17,10 @@ interface StringUtil {
     fun getPostDetails(postEntity: PostEntity, context: Context): SpannableStringBuilder {
         val detailStringBuilder = SpannableStringBuilder()
         val separator = "\u2022"
-        if (postEntity.nsfw)
+        if (postEntity.nsfw) {
             detailStringBuilder.append("NSFW$separator")
+            detailStringBuilder.setSpan(ForegroundColorSpan(Color.RED), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
         if (postEntity.flair != null)
             detailStringBuilder.append(postEntity.flair + separator)
         detailStringBuilder.append(postEntity.author + separator +
@@ -44,15 +44,6 @@ interface StringUtil {
         val configuration = SpannableConfiguration.create(context)
         val node = parser.parse(markdown)
         val text = SpannableRenderer().render(configuration, node)
-        BetterLinkMovementMethod.linkify(Linkify.ALL, textView)
-                .setOnLinkClickListener { textView, url ->
-                    if (!url.startsWith("/")) {
-                        val tabBuilder = CustomTabsIntent.Builder()
-                        val tabIntent = tabBuilder.build()
-                        tabIntent.launchUrl(context, Uri.parse(url))
-                    }
-                    true
-                }
         Markwon.unscheduleTableRows(textView)
         Markwon.unscheduleDrawables(textView)
         textView.text = text

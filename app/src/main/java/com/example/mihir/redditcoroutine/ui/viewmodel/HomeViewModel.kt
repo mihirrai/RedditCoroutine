@@ -26,7 +26,7 @@ class HomeViewModel(val tokenRepository: TokenRepository, val postRepository: Po
 
     private val _loading = MutableLiveData<Boolean>()
 
-    val error: LiveData<String>
+    val error: LiveData<String?>
         get() = _error
 
     private val _error = MutableLiveData<String>()
@@ -45,6 +45,10 @@ class HomeViewModel(val tokenRepository: TokenRepository, val postRepository: Po
             }
             _loading.postValue(false)
         }
+    }
+
+    fun errorShown() {
+        _error.postValue(null)
     }
 
     override fun onCleared() {

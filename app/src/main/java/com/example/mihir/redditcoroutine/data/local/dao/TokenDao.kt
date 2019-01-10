@@ -1,5 +1,6 @@
 package com.example.mihir.redditcoroutine.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,6 +15,9 @@ interface TokenDao {
 
     @Query("SELECT * FROM tokens WHERE active=1")
     suspend fun activeToken(): TokenEntity
+
+    @Query("SELECT * FROM tokens WHERE active=1")
+    fun activeTokenLive(): LiveData<TokenEntity>
 
     @Query("UPDATE tokens SET access_token=:accessToken, expiry=:expiry WHERE refresh_token=:refreshToken")
     fun updateToken(refreshToken: String, accessToken: String, expiry: OffsetDateTime)

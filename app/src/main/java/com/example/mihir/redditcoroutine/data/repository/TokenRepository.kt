@@ -1,6 +1,7 @@
 package com.example.mihir.redditcoroutine.data.repository
 
 import android.util.Base64
+import androidx.lifecycle.LiveData
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.TokenEntity
 import com.example.mihir.redditcoroutine.data.remote.RedditAPI
@@ -39,6 +40,28 @@ class TokenRepository(val database: AppDatabase) {
         }
     }
 
+    fun getTokenLive(): LiveData<TokenEntity> {
+        return database.tokenDao().activeTokenLive()
+    }
+
+    suspend fun newLoginToken(authCode: String) {
+        val response = authTokenToAccessToken(authCode).await()
+        val token = mapToEntity(response.body()!!)
+        disableActiveToken()
+        insertToken(token)
+    }
+
+    private fun authTokenToAccessToken(authCode: String): Deferred<Response<TokenResponse>> {
+        val headers = HashMap<String, String>()
+        val fields = HashMap<String, String>()
+        val auth = Base64.encodeToString("<your app id>:".toByteArray(), Base64.NO_WRAP)
+        headers["Authorization"] = "Basic $auth"
+        fields["grant_type"] = "authorization_code"
+        fields["code"] = authCode
+        fields["redirect_uri"] = "<redirect url>"
+        return api.getAccessToken(headers, fields)
+    }
+
     private fun mapToEntity(tokenResponse: TokenResponse): TokenEntity {
         return TokenEntity(tokenResponse.refreshToken, tokenResponse.scope, tokenResponse.accessToken, OffsetDateTime.now().plusSeconds(tokenResponse.expiresIn.toLong()), 1)
     }
@@ -46,7 +69,7 @@ class TokenRepository(val database: AppDatabase) {
     private fun getRemoteAccessToken(): Deferred<Response<TokenResponse>> {
         val headers = HashMap<String, String>()
         val fields = HashMap<String, String>()
-        val auth = Base64.encodeToString("l3_rEXGA5nyt9A:".toByteArray(), Base64.NO_WRAP)
+        val auth = Base64.encodeToString("<your app id>:".toByteArray(), Base64.NO_WRAP)
         headers["Authorization"] = "Basic $auth"
         headers["Content-Type"] = "application/x-www-form-urlencoded"
         fields["grant_type"] = "https://oauth.reddit.com/grants/installed_client"
@@ -59,7 +82,7 @@ class TokenRepository(val database: AppDatabase) {
     private fun refreshAccessToken(refreshToken: String): Deferred<Response<TokenResponse>> {
         val headers = HashMap<String, String>()
         val fields = HashMap<String, String>()
-        val auth = Base64.encodeToString("l3_rEXGA5nyt9A:".toByteArray(), Base64.NO_WRAP)
+        val auth = Base64.encodeToString("<your app id>:".toByteArray(), Base64.NO_WRAP)
         headers["Authorization"] = "Basic $auth"
         headers["Content-Type"] = "application/x-www-form-urlencoded"
         fields["grant_type"] = "refresh_token"
@@ -75,6 +98,12 @@ class TokenRepository(val database: AppDatabase) {
     private suspend fun insertToken(tokenEntity: TokenEntity) = coroutineScope {
         withContext(Dispatchers.IO) {
             database.tokenDao().insertToken(tokenEntity)
+        }
+    }
+
+    suspend fun disableActiveToken() = coroutineScope {
+        withContext(Dispatchers.IO) {
+            database.tokenDao().disableActiveToken()
         }
     }
 

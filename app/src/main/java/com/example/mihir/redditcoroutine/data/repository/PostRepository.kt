@@ -12,7 +12,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class PostRepository(val database: AppDatabase) {
-    val oauth = RedditAPI.oauthApi
+
+    private val oauth = RedditAPI.oauthApi
 
     fun getRemotePosts(accessToken: String, subredditName: String, after: String): Deferred<Response<SubredditResponse>> {
         return if (subredditName.isEmpty())
@@ -67,7 +68,7 @@ class PostRepository(val database: AppDatabase) {
                     subredditName,
                     children.data.preview?.images?.get(0)?.source?.url,
                     children.data.url,
-                    children.data.selftextHtml,
+                    children.data.selftext,
                     children.data.isSelf)
         }
 

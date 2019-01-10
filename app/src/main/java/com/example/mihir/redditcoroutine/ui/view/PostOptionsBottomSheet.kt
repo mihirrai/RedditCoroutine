@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.mihir.redditcoroutine.R
+import com.example.mihir.redditcoroutine.ui.view.fragment.SubredditFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.menu_post_options.view.*
 

@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.activity
 
 import android.animation.ObjectAnimator
 import android.content.Context

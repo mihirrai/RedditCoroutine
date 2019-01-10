@@ -1,6 +1,5 @@
 package com.example.mihir.redditcoroutine.data.repository
 
-import android.util.Log.d
 import androidx.paging.DataSource
 import com.example.mihir.redditcoroutine.data.local.AppDatabase
 import com.example.mihir.redditcoroutine.data.local.entity.SubredditEntity
@@ -25,7 +24,6 @@ class SubredditRepository(val database: AppDatabase) {
         val options = HashMap<String, String>()
         headers["Authorization"] = "Bearer $accessToken"
         options["after"] = after
-        d("scope", (scope == "*").toString())
         return if (scope == "*")
             oauth.getDefaultSubreddits(headers, options)
         else
@@ -35,7 +33,7 @@ class SubredditRepository(val database: AppDatabase) {
 
     suspend fun saveSubreddits(body: SubredditListResponse, refreshToken: String) = coroutineScope {
         withContext(Dispatchers.IO) {
-            val subreddits = body.data.children.map { children -> SubredditEntity(children.data.name, children.data.displayName, refreshToken,children.data.iconImg) }
+            val subreddits = body.data.children.map { children -> SubredditEntity(children.data.name, children.data.displayName, refreshToken, children.data.iconImg) }
             database.subredditDao().insert(subreddits)
         }
     }

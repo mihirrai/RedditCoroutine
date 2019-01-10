@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,10 +12,12 @@ import com.example.mihir.redditcoroutine.Injection
 import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.SubredditPostsListAdapter
+import com.example.mihir.redditcoroutine.ui.view.PostOptionsBottomSheet
+import com.example.mihir.redditcoroutine.ui.view.activity.ImageActivity
 import com.example.mihir.redditcoroutine.ui.viewmodel.SubredditViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.subreddit_fragment.*
-import kotlinx.android.synthetic.main.subreddit_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_subreddit.*
+import kotlinx.android.synthetic.main.fragment_subreddit.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 
@@ -26,7 +28,7 @@ class SubredditFragment : BaseFragment() {
     private lateinit var subreddit: String
     private val postsListAdapter = SubredditPostsListAdapter().apply {
         onItemClick = { fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id)) }
-        onMediaClick = { activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url)) }
+        onMediaClick = { activityNavigation.startActivity(ImageActivity.newIntent(context!!, it.url)) }
         onOptionsClick = { fragmentNavigation.pushDialogFragment(PostOptionsBottomSheet.newInstance(it.author, it.subreddit, it.id)) }
     }
 
@@ -35,7 +37,7 @@ class SubredditFragment : BaseFragment() {
         subreddit = arguments?.getString("subreddit").toString()
         if (subreddit.isEmpty())
             throw IllegalStateException()
-        return inflater.inflate(R.layout.subreddit_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_subreddit, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

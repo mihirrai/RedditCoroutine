@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.fragment
 
 import android.content.Context
 import android.content.Intent
@@ -29,6 +29,7 @@ open class BaseFragment : Fragment() {
     }
 
     interface ActivityNavigation {
-        fun pushActivty(intent: Intent)
+        fun startActivity(intent: Intent)
+        fun startActivityForResult(newIntent: Intent)
     }
 }

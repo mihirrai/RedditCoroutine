@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mihir.redditcoroutine.Injection
 import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.SubredditPostsListAdapter
+import com.example.mihir.redditcoroutine.ui.view.PostOptionsBottomSheet
+import com.example.mihir.redditcoroutine.ui.view.activity.ImageActivity
 import com.example.mihir.redditcoroutine.ui.viewmodel.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.home_fragment.*
-import kotlinx.android.synthetic.main.home_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 class HomeFragment : BaseFragment() {
@@ -24,13 +27,13 @@ class HomeFragment : BaseFragment() {
     private lateinit var viewModelFactory: ViewModelFactory
     private val postsListAdapter = SubredditPostsListAdapter().apply {
         onItemClick = { fragmentNavigation.pushFragment(PostFragment.newInstance(it.subreddit, it.id)) }
-        onMediaClick = { activityNavigation.pushActivty(ImageActivity.newIntent(context!!, it.url)) }
+        onMediaClick = { activityNavigation.startActivity(ImageActivity.newIntent(context!!, it.url)) }
         onOptionsClick = { fragmentNavigation.pushDialogFragment(PostOptionsBottomSheet.newInstance(it.author, it.subreddit, it.id)) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.home_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,6 +47,13 @@ class HomeFragment : BaseFragment() {
         swipe_refresh.setOnRefreshListener {
             viewModel.refresh()
         }
+        postsListAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    view.recyclerview_posts_home.layoutManager!!.scrollToPosition(0)
+                }
+            }
+        })
     }
 
 
@@ -59,7 +69,9 @@ class HomeFragment : BaseFragment() {
             recyclerview_posts_home.layoutManager!!.scrollToPosition(0)
         })
         viewModel.error.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(this.view!!, it, Snackbar.LENGTH_LONG).show()
+            if (it != null)
+                Snackbar.make(this.view!!, it, Snackbar.LENGTH_LONG).show()
+            viewModel.errorShown()
         })
     }
 }

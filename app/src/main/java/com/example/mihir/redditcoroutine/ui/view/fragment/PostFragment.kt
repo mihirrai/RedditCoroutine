@@ -1,4 +1,4 @@
-package com.example.mihir.redditcoroutine.ui.view
+package com.example.mihir.redditcoroutine.ui.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,8 +13,8 @@ import com.example.mihir.redditcoroutine.R
 import com.example.mihir.redditcoroutine.ui.ViewModelFactory
 import com.example.mihir.redditcoroutine.ui.adapter.CommentAdapter
 import com.example.mihir.redditcoroutine.ui.viewmodel.PostViewModel
-import kotlinx.android.synthetic.main.post_fragment.*
-import kotlinx.android.synthetic.main.post_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_post.*
+import kotlinx.android.synthetic.main.fragment_post.view.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 class PostFragment : BaseFragment() {
@@ -44,7 +44,7 @@ class PostFragment : BaseFragment() {
         id = arguments?.getString("id").toString()
         if (subreddit.isEmpty() || id.isEmpty())
             throw IllegalStateException()
-        return inflater.inflate(R.layout.post_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_post, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

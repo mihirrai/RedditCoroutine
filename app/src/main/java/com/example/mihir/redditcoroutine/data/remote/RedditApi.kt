@@ -20,10 +20,6 @@ interface RedditAPI {
     fun getAccessToken(@HeaderMap headers: Map<String, String>,
                        @FieldMap fields: Map<String, String>): Deferred<Response<TokenResponse>>
 
-    @FormUrlEncoded
-    @POST("api/v1/authorize/")
-    fun authorize(@HeaderMap headers: Map<String, String>,
-                  @FieldMap fields: Map<String, String>): Deferred<Response<TokenResponse>>
 
     @GET("./?raw_json=1")
     fun getFrontpage(@HeaderMap headers: Map<String, String>,
@@ -34,7 +30,7 @@ interface RedditAPI {
                      @Path("subreddit") subreddit: String,
                      @QueryMap options: Map<String, String>): Deferred<Response<SubredditResponse>>
 
-    @GET("subreddits/?raw_json=1")
+    @GET("subreddits/mine/?raw_json=1")
     fun getSubredditList(@HeaderMap headers: Map<String, String>,
                          @QueryMap options: Map<String, String>): Deferred<Response<SubredditListResponse>>
 

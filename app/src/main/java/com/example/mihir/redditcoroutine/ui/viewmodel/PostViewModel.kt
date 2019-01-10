@@ -41,7 +41,6 @@ class PostViewModel(private val tokenRepository: TokenRepository, private val po
     fun refresh() {
         loading.value = true
         launch {
-
             loading.postValue(false)
         }
     }

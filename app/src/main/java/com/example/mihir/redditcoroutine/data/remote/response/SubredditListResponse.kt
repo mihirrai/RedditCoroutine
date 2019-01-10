@@ -190,9 +190,9 @@ data class SubredditListResponse(
                     @field:Json(name = "whitelist_status")
                     val whitelistStatus: String,
                     @field:Json(name = "wiki_enabled")
-                    val wikiEnabled: Boolean,
+                    val wikiEnabled: Boolean?,
                     @field:Json(name = "wls")
-                    val wls: Int
+                    val wls: Int?
             )
         }
     }

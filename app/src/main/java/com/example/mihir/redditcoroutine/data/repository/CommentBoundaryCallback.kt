@@ -45,7 +45,7 @@ class CommentBoundaryCallback(val tokenRepository: TokenRepository,
         return flattenedList.mapIndexed { index, children ->
             CommentEntity(children.data.id,
                     children.data.author,
-                    children.data.bodyHtml,
+                    children.data.body,
                     children.data.children?.joinToString(),
                     children.data.count,
                     children.data.createdUtc,

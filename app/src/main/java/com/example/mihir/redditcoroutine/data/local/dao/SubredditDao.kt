@@ -14,4 +14,7 @@ interface SubredditDao {
 
     @Query("SELECT * FROM subreddits WHERE refreshToken = :refreshToken")
     fun subreddits(refreshToken: String): DataSource.Factory<Int, SubredditEntity>
+
+    @Query("DELETE FROM subreddits")
+    fun deleteAll()
 }

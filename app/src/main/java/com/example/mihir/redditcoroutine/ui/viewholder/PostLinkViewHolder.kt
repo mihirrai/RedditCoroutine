@@ -1,5 +1,6 @@
 package com.example.mihir.redditcoroutine.ui.viewholder
 
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,9 +22,12 @@ class PostLinkViewHolder(view: View) : RecyclerView.ViewHolder(view), StringUtil
         details.text = getPostDetails(item, itemView.context)
         stats.text = getPostStats(item)
         thumbnail.setOnClickListener { onMediaClick?.invoke(item) }
-        GlideApp.with(itemView)
-                .load(item.thumbnailUrl)
-                .centerCrop()
-                .into(thumbnail)
+        if (!item.nsfw)
+            GlideApp.with(itemView)
+                    .load(item.thumbnailUrl)
+                    .centerCrop()
+                    .into(thumbnail)
+        else
+            thumbnail.setBackgroundColor(Color.RED)
     }
 }
